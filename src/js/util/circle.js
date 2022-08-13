@@ -16,6 +16,12 @@ class Circle {
   isPointInside(p) {
     return this.position.distanceSquaredTo(p) <= this.radiusSquared;
   }
+
+  render(ctx) {
+    ctx.beginPath();
+    ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI*2);
+    ctx.stroke();
+  }
 }
 
 Circle.prototype.isCircle = true;

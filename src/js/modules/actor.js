@@ -9,7 +9,7 @@ class Actor {
   constructor() {
     this.up = new Vector(0, 1);
     this.forward = new Vector(1, 0);
-    this.position = new Vector(0, -10);
+    this.position = new Vector(0, 0);
     this.motion = new Vector(0, 0);
     this.shape = new Circle(this.position, 0.25);
   }
@@ -29,7 +29,7 @@ class Actor {
   update(delta) {
     // set direction
     // this.up.set(0, 1);
-    this.forward.copy(this.up).rotate(Math.PI / 2);
+    this.forward.copy(this.up).rotate(-Math.PI / 2);
 
     // get input
     let input = new Vector();

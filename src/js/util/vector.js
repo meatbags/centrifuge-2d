@@ -24,6 +24,12 @@ class Vector {
     return this;
   }
 
+  sub(v) {
+    this.x -= v.x;
+    this.y -= v.y;
+    return this;
+  }
+
   multiplyScalar(s) {
     this.x *= s;
     this.y *= s;

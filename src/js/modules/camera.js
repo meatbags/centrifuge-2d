@@ -17,13 +17,13 @@ class Camera {
     this.ref = {};
     this.ref.Actor = root.modules.Actor;
     this.position.copy(this.ref.Actor.position);
-    this.rotation = -this.ref.Actor.up.angle() - Math.PI/2;
+    this.rotation = this.ref.Actor.up.angle() - Math.PI/2;
   }
 
   update(delta) {
     this.age += delta;
     this.position.lerp(this.ref.Actor.position, 0.2);
-    this.rotation = Lerp(this.rotation, -this.ref.Actor.up.angle() - Math.PI/2, 0.2);
+    this.rotation = Lerp(this.rotation, this.ref.Actor.up.angle() - Math.PI/2, 0.2);
   }
 
   transformContext(ctx) {
@@ -33,13 +33,14 @@ class Camera {
     ctx.translate(camera.x, camera.y);
     ctx.rotate(this.rotation);
     ctx.scale(this.zoom, this.zoom);
+    ctx.scale(1, -1);
     ctx.translate(-camera.x, -camera.y);
     camera.rotate(-this.rotation);
     centre.rotate(-this.rotation);
-    ctx.translate((centre.x - camera.x) / this.zoom, (centre.y - camera.y) / this.zoom);
+    ctx.translate((centre.x - camera.x) / this.zoom, (centre.y - camera.y) / -this.zoom);
     ctx.lineWidth = ctx.lineWidth / this.zoom;
   }
-  
+
   restoreContext(ctx) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }

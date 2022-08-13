@@ -1,10 +1,12 @@
 /** Scene */
 
 import Centrifuge from './centrifuge';
+import Circle from '../util/circle';
 import Config from './config';
 import Round from '../util/round';
 import Vector from '../util/vector';
 import Line from '../util/line';
+import CommonTangents from '../util/common_tangents';
 
 class Scene {
   constructor() {
@@ -16,13 +18,18 @@ class Scene {
         position: new Vector(0, 0),
         radius: 10,
         rotationSpeed: Math.PI / 4,
+        ladders: [0],
       }),
       new Centrifuge({
-        position: new Vector(-15, -10),
+        position: new Vector(15, 15),
         radius: 5,
         rotationSpeed: Math.PI,
       }),
+      new Circle(new Vector(0, 15), 0.5),
     ];
+
+    this.lines = CommonTangents(this.objects[0].circle, this.objects[1].circle);
+    console.log(this.lines);
 
     document.querySelector('.wrapper').appendChild(this.cvs);
   }
@@ -48,8 +55,9 @@ class Scene {
   }
 
   update(delta) {
-    this.objects.forEach(obj => obj.update(delta));
-    this.ref.Camera.update(delta);
+    this.objects.forEach(obj => {
+      if (obj.update) obj.update(delta);
+    });this.ref.Camera.update(delta);
     this.ref.Actor.update(delta);
   }
 
@@ -67,8 +75,16 @@ class Scene {
     this.ref.Camera.transformContext(this.ctx);
 
     // draw objects
+    this.lines.forEach(line => line.render(this.ctx));
     this.objects.forEach(obj => obj.render(this.ctx));
     this.ref.Actor.render(this.ctx);
+
+    // grid
+    for (let x=0; x<=15; x++) {
+      for (let y=0; y<=15; y++) {
+        this.ctx.fillRect(x, y, 0.1, 0.1);
+      }
+    }
 
     // restore
     this.ref.Camera.restoreContext(this.ctx);

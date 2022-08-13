@@ -16,13 +16,11 @@ const GetTangent = (p, r1, r2, tangents) => {
   tangents.push(new Line(a, b, c));
 };
 
-const CommonTangents(c1, c2) {
+const CommonTangents = (c1, c2) => {
   let tangents = [];
   let p = c2.position.clone().sub(c1.position);
-  GetTangent(p, -c1.radius, -c2.radius, tangents);
-  GetTangent(p,  c1.radius, -c2.radius, tangents);
-  GetTangent(p, -c1.radius,  c2.radius, tangents);
-  GetTangent(p,  c1.radius,  c2.radius, tangents);
+  let solveFor = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+  solveFor.forEach(s => GetTangent(p, c1.radius * s[0], c2.radius * s[1], tangents));
   tangents.forEach(line => {
     line.c -= line.a * c1.position.x + line.b * c1.position.y;
   });
