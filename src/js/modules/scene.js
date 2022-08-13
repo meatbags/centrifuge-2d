@@ -9,18 +9,20 @@ class Scene {
   constructor() {
     this.cvs = document.createElement('canvas');
     this.ctx = this.cvs.getContext('2d');
-    this.state = {age: 0, scale: 15};
+
     this.centrifuge = new Centrifuge({
       position: new Vector(0, 0),
       radius: 10,
       rotationSpeed: Math.PI / 4,
     });
+
     document.querySelector('.wrapper').appendChild(this.cvs);
   }
 
   bind(root) {
     this.ref = {};
     this.ref.Actor = root.modules.Actor;
+    this.ref.Camera = root.modules.Camera;
     this.ref.Controller = root.modules.Controller;
 
     // events
@@ -38,8 +40,8 @@ class Scene {
   }
 
   update(delta) {
-    this.state.age += delta;
     this.centrifuge.update(delta);
+    this.ref.Camera.update(delta);
     this.ref.Actor.update(delta);
   }
 
@@ -47,25 +49,14 @@ class Scene {
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
 
     // centre on player
-    let px = this.ref.Actor.position.x * this.state.scale;
-    let py = this.ref.Actor.position.y * this.state.scale;
-    this.ctx.save();
-    this.ctx.translate(this.cvs.width/2-px, this.cvs.height/2-px);
-    this.ctx.scale(this.state.scale, this.state.scale);
-    this.ctx.rotate(-this.ref.Actor.up.angle() - Math.PI/2);
+    this.ref.Camera.transformContext(this.ctx);
 
     // draw objects
-    this.ctx.strokeStyle = '#000';
-    this.ctx.fillStyle = '#000';
-    this.ctx.font = '20px monospace';
-    this.ctx.lineWidth = 2 / this.state.scale;
-    this.ctx.lineCap = 'round';
     this.centrifuge.render(this.ctx);
-
     this.ref.Actor.render(this.ctx);
 
     // restore
-    this.ctx.restore();
+    this.ref.Camera.restoreContext(this.ctx);
   }
 }
 

@@ -1,6 +1,7 @@
 /** App */
 
 import Actor from './modules/actor';
+import Camera from './modules/camera';
 import Controller from './modules/controller';
 import Loop from './modules/loop';
 import Scene from './modules/scene';
@@ -9,6 +10,7 @@ class App {
   constructor() {
     this.modules = {
       Actor: new Actor(),
+      Camera: new Camera(),
       Controller: new Controller(),
       Loop: new Loop(),
       Scene: new Scene(),

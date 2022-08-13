@@ -8,20 +8,21 @@ class Controller {
   constructor() {
     this.state = {};
     this.eventListeners = [];
-    this.keyboard = new Keyboard({ onKeyDown: k => this.onKey(k) });
+    this.ui = {};
+    this.keyboard = new Keyboard({
+      onKeyDown: k => this.onKey(k),
+      onKeyUp: k => this.onKey(k),
+    });
   }
 
   onKey(key) {
-    switch (key.toLowerCase()) {
-      case 'a':
-        break;
-      default:
-        break;
+    for (const key in Config.Controller.bind) {
+      this.ui[key] = this.keyboard.isAny(Config.Controller.bind[key]);
     }
   }
 
-  isKeyDown(key) {
-    return this.keyboard.isKeyDown(key);
+  isUI(key) {
+    return this.ui[key];
   }
 
   on(event, callback) {

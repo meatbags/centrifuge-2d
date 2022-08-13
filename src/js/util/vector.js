@@ -13,6 +13,11 @@ class Vector {
     }
   }
 
+  set(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
   add(v) {
     this.x += v.x;
     this.y += v.y;
@@ -39,6 +44,12 @@ class Vector {
 
   angle() {
     return Math.atan2(this.y, this.x);
+  }
+
+  lerp(v, t) {
+    this.x = this.x + (v.x - this.x) * t;
+    this.y = this.y + (v.y - this.y) * t;
+    return this;
   }
 
   distanceTo(v) {
