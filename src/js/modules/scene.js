@@ -4,17 +4,25 @@ import Centrifuge from './centrifuge';
 import Config from './config';
 import Round from '../util/round';
 import Vector from '../util/vector';
+import Line from '../util/line';
 
 class Scene {
   constructor() {
     this.cvs = document.createElement('canvas');
     this.ctx = this.cvs.getContext('2d');
 
-    this.centrifuge = new Centrifuge({
-      position: new Vector(0, 0),
-      radius: 10,
-      rotationSpeed: Math.PI / 4,
-    });
+    this.objects = [
+      new Centrifuge({
+        position: new Vector(0, 0),
+        radius: 10,
+        rotationSpeed: Math.PI / 4,
+      }),
+      new Centrifuge({
+        position: new Vector(-15, -10),
+        radius: 5,
+        rotationSpeed: Math.PI,
+      }),
+    ];
 
     document.querySelector('.wrapper').appendChild(this.cvs);
   }
@@ -40,7 +48,7 @@ class Scene {
   }
 
   update(delta) {
-    this.centrifuge.update(delta);
+    this.objects.forEach(obj => obj.update(delta));
     this.ref.Camera.update(delta);
     this.ref.Actor.update(delta);
   }
@@ -48,11 +56,18 @@ class Scene {
   render(delta) {
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
 
+    // set style
+    this.ctx.strokeStyle = '#000';
+    this.ctx.fillStyle = '#000';
+    this.ctx.font = '20px monospace';
+    this.ctx.lineWidth = 2;
+    this.ctx.lineCap = 'round';
+
     // centre on player
     this.ref.Camera.transformContext(this.ctx);
 
     // draw objects
-    this.centrifuge.render(this.ctx);
+    this.objects.forEach(obj => obj.render(this.ctx));
     this.ref.Actor.render(this.ctx);
 
     // restore

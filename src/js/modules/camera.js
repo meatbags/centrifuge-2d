@@ -37,14 +37,9 @@ class Camera {
     camera.rotate(-this.rotation);
     centre.rotate(-this.rotation);
     ctx.translate((centre.x - camera.x) / this.zoom, (centre.y - camera.y) / this.zoom);
-
-    ctx.strokeStyle = '#000';
-    ctx.fillStyle = '#000';
-    ctx.font = '20px monospace';
-    ctx.lineWidth = 2 / this.zoom;
-    ctx.lineCap = 'round';
+    ctx.lineWidth = ctx.lineWidth / this.zoom;
   }
-
+  
   restoreContext(ctx) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }

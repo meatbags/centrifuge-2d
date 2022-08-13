@@ -1,11 +1,13 @@
 /** Centrifuge */
 
 import Vector from '../util/vector';
+import Circle from '../util/circle';
 
 class Centrifuge {
   constructor(params) {
     this.position = params.position || new Vector();
     this.radius = params.radius || 1;
+    this.circle = new Circle(this.position, this.radius);
     this.rotationSpeed = params.rotationSpeed || 0;
     this.state = {
       rotation: params.rotation || 0,
