@@ -22,7 +22,7 @@ class Centrifuge {
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, this.radius, r1, r2);
     ctx.moveTo(this.position.x, this.position.y);
-    ctx.arc(this.position.x, this.position.y, 10, r1, r2);
+    ctx.arc(this.position.x, this.position.y, this.radius/10, r1, r2);
     ctx.stroke();
   }
 }
