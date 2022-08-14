@@ -11,48 +11,82 @@ class Actor {
     this.forward = new Vector(1, 0);
     this.position = new Vector(0, -10);
     this.motion = new Vector(0, 0);
-    this.circle = new Circle(this.position, 0.25);
+    this.snapped = false;
+
+    // collision shape
+    this.circle = new Circle(this.position, 0.5);
   }
 
   bind(root) {
     this.ref = {};
     this.ref.Controller = root.modules.Controller;
     this.ref.PhysicsWorld = root.modules.PhysicsWorld;
-
-    //test
-    window.addEventListener('click', () => {
-      let r = Math.random() * 2 * Math.PI;
-      this.up.rotate(r);
-    });
   }
 
   update(delta) {
-    // set direction
-    this.ref.PhysicsWorld.setPositionOrientation(this.circle, this.up, delta);
-    this.forward.copy(this.up).rotate(-Math.PI / 2);
+    // check if snapped
+    this.snapped = this.ref.PhysicsWorld.isSnapped(this.circle);
 
-    // get input
-    let input = new Vector();
-    if (this.ref.Controller.isUI(Config.Event.UI_RIGHT)) input.x += 1;
-    if (this.ref.Controller.isUI(Config.Event.UI_LEFT)) input.x -= 1;
-    if (this.ref.Controller.isUI(Config.Event.UI_UP)) input.y += 1;
-    if (this.ref.Controller.isUI(Config.Event.UI_DOWN)) input.y -= 1;
-    input.normalise();
+    // snapped to world
+    if (this.snapped) {
+      this.ref.PhysicsWorld.snapToWorld(this.circle, this.up, delta);
+      this.forward.copy(this.up).rotate(-Math.PI / 2);
 
-    // set motion vector
-    let forward = this.forward.clone().multiplyScalar(input.x * Config.Actor.speed);
-    let up = this.up.clone().multiplyScalar(input.y * Config.Actor.speed);
-    let motion = forward.clone().add(up);
-    // this.ref.PhysicsWorld.move(this.circle, motion);
+      // get motion
+      let input = new Vector();
+      let onLadder = false;
+      let x = 0;
+      let y = 0;
 
-    // apply motion
-    this.position.x += motion.x * delta;
-    this.position.y += motion.y * delta;
+      // get input
+      if (this.ref.Controller.isUI(Config.Event.UI_RIGHT)) input.x += 1;
+      if (this.ref.Controller.isUI(Config.Event.UI_LEFT)) input.x -= 1;
+      if (this.ref.Controller.isUI(Config.Event.UI_UP)) input.y += 1;
+      if (this.ref.Controller.isUI(Config.Event.UI_DOWN)) input.y -= 1;
+
+      // apply ladder movement
+      if (onLadder && input.y !== 0) {
+        input.normalise();
+        x = input.x * Config.Actor.speed;
+        y = input.y * Config.Actor.speed;
+        let forward = this.forward.clone().multiplyScalar(x);
+        let up = this.up.clone().multiplyScalar(y);
+        this.motion = forward.clone().add(up);
+        this.position.x += this.motion.x * delta;
+        this.position.y += this.motion.y * delta;
+
+      // apply centrifugal jump
+      } else if (!onLadder && this.ref.Controller.isUI(Config.Event.UI_JUMP)) {
+        let v = this.ref.PhysicsWorld.getTangentialVelocity(this.circle);
+        x = input.x * Config.Actor.speed + v;
+        y = Config.Actor.jumpImpulse;
+        let forward = this.forward.clone().multiplyScalar(x);
+        let up = this.up.clone().multiplyScalar(y);
+        this.motion = forward.clone().add(up);
+        this.position.x += this.motion.x * delta;
+        this.position.y += this.motion.y * delta;
+
+      // apply centrifugal movement
+      } else {
+        x = input.x * Config.Actor.speed;
+        this.motion = this.forward.clone().multiplyScalar(x);
+        let dir = Math.sign(this.forward.dot(this.motion)) * Math.sign(input.x);
+        this.ref.PhysicsWorld.moveInCentrifuge(this.circle, dir * x * delta);
+      }
+
+    // floating -- move, snap to world
+    } else {
+      this.position.x += this.motion.x * delta;
+      this.position.y += this.motion.y * delta;
+      this.ref.PhysicsWorld.snapToWorld(this.circle, this.up, delta);
+      this.forward.copy(this.up).rotate(-Math.PI / 2);
+    }
   }
 
   render(ctx) {
-    DrawArrow(ctx, this.position, this.up, Config.Actor.height);
-    DrawArrow(ctx, this.position, this.forward, 1);
+    DrawArrow(ctx, this.position, this.up, 2);
+    DrawArrow(ctx, this.position, this.forward, 2);
+    DrawArrow(ctx, this.position, this.motion, 3);
     ctx.beginPath();
     ctx.arc(this.circle.position.x, this.circle.position.y, this.circle.radius, 0, Math.PI*2);
     ctx.fill();

@@ -2,6 +2,7 @@
 
 import Vector from '../util/vector';
 import MinAngleBetween from '../util/min_angle_between';
+import Config from './config';
 import Lerp from '../util/lerp';
 
 class Camera {
@@ -9,7 +10,7 @@ class Camera {
     this.position = new Vector();
     this.centre = new Vector();
     this.rotation = 0;
-    this.zoom = 15;
+    this.zoom = Config.Camera.zoom;
     this.axis = new Vector(1, -1);
     this.age = 0;
   }
@@ -56,9 +57,10 @@ class Camera {
 
   update(delta) {
     this.age += delta;
-    this.position.lerp(this.ref.Actor.position, 0.5);
+    this.position.lerp(this.ref.Actor.position, 0.75);
     let angle = MinAngleBetween(this.rotation, this.getTargetRotation());
-    this.rotation += angle * 0.05;
+    let blend = 0.1;
+    this.rotation = (this.rotation + angle * blend) % Config.Const.TAU;
   }
 }
 

@@ -1,8 +1,7 @@
 /** Draw arrow */
 
-const DrawArrow = (ctx, p, v, length) => {
+const DrawArrow = (ctx, p, v, length, size=0.25) => {
   let tmp = v.clone().normalise();
-  let size = length / 4;
   let x = p.x + tmp.x * length;
   let y = p.y + tmp.y * length;
   ctx.beginPath();

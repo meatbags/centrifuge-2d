@@ -51,6 +51,7 @@ class Scene {
     let stats = [
       'UP: ' + Round(this.ref.Actor.up.x, 2) + ', ' + Round(this.ref.Actor.up.y, 2),
       'CAMERA: ' + Round(this.ref.Camera.rotation / Math.PI, 3) + ' PI',
+      'G-FORCE: ' + Round(),
     ];
     stats.forEach((stat, i) => {
       this.ctx.fillText(stat, 20, 30 + 15 * i);

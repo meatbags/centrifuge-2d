@@ -3,7 +3,11 @@
 const Config = {
   Actor: {
     height: 1.8,
-    speed: 5,
+    jumpImpulse: 3,
+    speed: 8,
+  },
+  Camera: {
+    zoom: 30,
   },
   Controller: {
     bind: {
@@ -13,6 +17,10 @@ const Config = {
       UI_RIGHT: ['arrowright', 'd'],
       UI_JUMP: [' '],
     }
+  },
+  Const: {
+    TAU: Math.PI * 2,
+    HALF_PI: Math.PI / 2,
   },
   Event: {
     UI_LEFT: 'UI_LEFT',

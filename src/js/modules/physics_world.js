@@ -11,11 +11,11 @@ class PhysicsWorld {
     let c1 = new Centrifuge({
       position: new Vector(0, 0),
       radius: 10,
-      rotationSpeed: Math.PI / 4,
+      gForce: 0.25,
       ladders: [0],
     });
     let c2 = new Centrifuge({
-      position: new Vector(15, 15),
+      position: new Vector(15, 35),
       radius: 5,
       rotationSpeed: Math.PI,
     });
@@ -28,23 +28,39 @@ class PhysicsWorld {
     }
   }
 
-  setActor(delta) {
-
+  isSnapped(circle) {
+    for (let i=0; i<this.children.length; i++) {
+      if (this.children[i].isCircleOnEdge(circle)) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  setPositionOrientation(circle, up, delta) {
-    // TODO: get most relevant object (figure out hierarchy)
+  snapToWorld(circle, up, delta) {
     this.children.forEach(c => {
-      // TODO: edge check to include motion vector not in UP
-      if (!c.isCircleOnEdge(circle)) return;
-
-      // set next position in centrifuge
-      c.pullCircleIn(circle);
-      circle.position.rotateOnAxis(c.rotation * delta, c.position);
-
-      // set up vector
-      up.copy(c.getUp(circle.position));
+      if (c.isCircleOnEdge(circle)) {
+        c.snapAndRotate(circle, up, delta);
+      }
     });
+  }
+
+  moveInCentrifuge(circle, distance) {
+    this.children.forEach(c => {
+      if (c.isCircleOnEdge(circle)) {
+        c.moveCircleAlongCircumference(circle, distance);
+      }
+    });
+  }
+
+  getTangentialVelocity(circle) {
+    let v = 0;
+    this.children.forEach(c => {
+      if (c.isCircleOnEdge(circle)) {
+        v = c.getTangentialVelocity();
+      }
+    });
+    return v;
   }
 
   update(delta) {

@@ -42,7 +42,7 @@ class Vector {
 
   normalise() {
     let mag = this.magnitude();
-    if (mag === 0) return;
+    if (mag === 0) return this;
     this.x /= mag;
     this.y /= mag;
     return this;
@@ -84,6 +84,10 @@ class Vector {
     this.x = axis.x + Math.cos(theta + r) * mag;
     this.y = axis.y + Math.sin(theta + r) * mag;
     return this;
+  }
+
+  dot(v) {
+    return this.x * v.x + this.y * v.y;
   }
 
   copy(v) {

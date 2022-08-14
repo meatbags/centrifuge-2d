@@ -22,9 +22,9 @@ html, body {
     left: 50%;
     z-index: 999;
     pointer-events: none;
-    width: 20px;
-    height: 20px;
-    outline: 2px solid red;
+    width: 5px;
+    height: 5px;
+    background: red;
     border-radius: 100%;
     transform: translate(-50%, -50%);
   }

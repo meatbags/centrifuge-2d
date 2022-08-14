@@ -5,22 +5,33 @@ import Circle from '../util/circle';
 
 const TAU = Math.PI * 2;
 const HALF_PI = Math.PI / 2;
+const ONE_G = 9.80665;
 
 class Centrifuge extends Circle {
   constructor(params) {
     super(params.position || new Vector(), params.radius || 1);
-    // this.position = params.position || new Vector();
-    // this.radius = params.radius || 1;
-    this.circumference = params.radius * TAU;
+
     this.rotation = params.rotation || 0;
-    this.rotationSpeed = params.rotationSpeed || 0;
-    this.gForce = this.getGForce();
     this.ladders = params.ladders || null;
-    // this.circle = new Circle(this.position, this.radius);
+    this.rotationSpeed = 0;
+    this.gForce = 0;
+
+    if (params.rotationSpeed) {
+      this.setRotationSpeed(params.rotationSpeed);
+    } else if (params.gForce) {
+      this.setGForce(params.gForce);
+    }
   }
 
   setGForce(g) {
-    this.rotationSpeed = Math.sqrt(g / radius);
+    this.gForce = g * ONE_G;
+    this.rotationSpeed = Math.sqrt(this.gForce / this.radius);
+    console.log('G=', this.gForce, 'W=', this.rotationSpeed/TAU, 'hz');
+  }
+
+  setRotationSpeed(s) {
+    this.rotationSpeed = s;
+    this.gForce = s * s * this.radius;
   }
 
   getEdgeVelocity(p) {
@@ -30,16 +41,18 @@ class Centrifuge extends Circle {
     return v;
   }
 
+  snapAndRotate(circle, up, delta) {
+    this.snapCircleToEdge(circle);
+    circle.position.rotateOnAxis(this.rotationSpeed * delta, this.position);
+    up.copy(this.getUp(circle.position));
+  }
+
+  getTangentialVelocity() {
+    return this.radius * this.rotationSpeed;
+  }
+
   getUp(p) {
     return this.position.clone().sub(p).normalise();
-  }
-
-  getGForce() {
-    return this.rotationSpeed * this.rotationSpeed * this.radius;
-  }
-
-  getCentrifugalForce(mass) {
-    return mass * this.getGForce;
   }
 
   update(delta) {
