@@ -9,9 +9,9 @@ class Actor {
   constructor() {
     this.up = new Vector(0, 1);
     this.forward = new Vector(1, 0);
-    this.position = new Vector(0, 0);
+    this.position = new Vector(0, -10);
     this.motion = new Vector(0, 0);
-    this.shape = new Circle(this.position, 0.25);
+    this.circle = new Circle(this.position, 0.25);
   }
 
   bind(root) {
@@ -28,7 +28,7 @@ class Actor {
 
   update(delta) {
     // set direction
-    // this.up.set(0, 1);
+    this.ref.PhysicsWorld.setPositionOrientation(this.circle, this.up, delta);
     this.forward.copy(this.up).rotate(-Math.PI / 2);
 
     // get input
@@ -43,6 +43,7 @@ class Actor {
     let forward = this.forward.clone().multiplyScalar(input.x * Config.Actor.speed);
     let up = this.up.clone().multiplyScalar(input.y * Config.Actor.speed);
     let motion = forward.clone().add(up);
+    // this.ref.PhysicsWorld.move(this.circle, motion);
 
     // apply motion
     this.position.x += motion.x * delta;
@@ -53,7 +54,7 @@ class Actor {
     DrawArrow(ctx, this.position, this.up, Config.Actor.height);
     DrawArrow(ctx, this.position, this.forward, 1);
     ctx.beginPath();
-    ctx.arc(this.shape.position.x, this.shape.position.y, this.shape.radius, 0, Math.PI*2);
+    ctx.arc(this.circle.position.x, this.circle.position.y, this.circle.radius, 0, Math.PI*2);
     ctx.fill();
   }
 }

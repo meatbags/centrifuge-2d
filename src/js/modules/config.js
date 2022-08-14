@@ -15,8 +15,6 @@ const Config = {
     }
   },
   Event: {
-    UPDATE: 'EVENT_UPDATE',
-    RENDER: 'EVENT_RENDER',
     UI_LEFT: 'UI_LEFT',
     UI_RIGHT: 'UI_RIGHT',
     UI_UP: 'UI_UP',
