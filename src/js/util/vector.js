@@ -52,6 +52,10 @@ class Vector {
     return Math.atan2(this.y, this.x);
   }
 
+  angleTo(v) {
+    return Math.atan2(v.y - this.y, v.x - this.x);
+  }
+
   lerp(v, t) {
     this.x = this.x + (v.x - this.x) * t;
     this.y = this.y + (v.y - this.y) * t;
@@ -71,6 +75,14 @@ class Vector {
     let mag = this.magnitude();
     this.x = Math.cos(theta + r) * mag;
     this.y = Math.sin(theta + r) * mag;
+    return this;
+  }
+
+  rotateOnAxis(r, axis) {
+    let theta = axis.angleTo(this);
+    let mag = axis.distanceTo(this);
+    this.x = axis.x + Math.cos(theta + r) * mag;
+    this.y = axis.y + Math.sin(theta + r) * mag;
     return this;
   }
 
